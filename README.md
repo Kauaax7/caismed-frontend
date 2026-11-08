@@ -26,7 +26,7 @@ Para voltar aos dados iniciais: Admin, Configurações, Restaurar Dados de Demon
 ## Estrutura
 
 ```
-index.html ... landing e telas públicas (login, busca, primeiro acesso, estados)
+index.html ... landing informativa e telas públicas (login, primeiro acesso, estados)
 home.html, consultas.html ... portal do paciente
 atendente-painel.html, agenda.html, fila.html, caixa.html ... portal do atendente
 medico-painel.html, atendimento.html, prontuario.html ... portal do médico

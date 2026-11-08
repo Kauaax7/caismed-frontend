@@ -4,25 +4,18 @@
 const cartaoUnidade = (u) => `<article class="card stack sm"><div class="row between"><h3>${esc(u.nome)}</h3>${u.ativa === false ? '<span class="badge mute">Inativa</span>' : ""}</div>
   <p>${esc(u.endereco)}, ${esc(u.bairro)}, ${esc(u.cidade)}</p><p class="muted">${esc(u.horario)}</p><p class="muted">${esc(u.fone)}</p>
   <div class="chips" style="margin-top:6px">${(u.especialidades || []).map((e) => `<span class="badge info">${esc(espNome(e))}</span>`).join("")}</div>
-  <div class="actions" style="margin-top:10px"><a class="btn outline sm" href="${mapaURL(u)}" target="_blank" rel="noopener">${ico("pin")} Como Chegar</a><a class="btn sm" href="agendamento.html?unidade=${u.id}">Agendar Aqui</a></div></article>`;
+  <div class="actions" style="margin-top:10px"><a class="btn outline sm" href="${mapaURL(u)}" target="_blank" rel="noopener">${ico("pin")} Como Chegar</a></div></article>`;
 const cartaoMedico = (m, p) => `<article class="doc-card" style="cursor:default"><span class="avatar lg">${esc(iniciais(m.nome))}</span><div class="grow"><b>${esc(m.nome)}</b><small>${esc((m.especialidades || []).map(espNome).join(", "))} · ${esc(m.crm || "")}</small>
   <small class="rating">★ ${(m.nota || 5).toFixed(1)}</small>${m.tele ? '<span class="badge info">Faz Teleconsulta</span>' : ""}
   <small>${p ? `Próximo horário: <b>${rotuloDia(p.data)} às ${p.h}</b>, ${esc(nomeUnidade(p.unidadeId))}` : "Sem horários nos próximos dias"}</small></div>
   <a class="btn sm" href="agendamento.html?especialidade=${(m.especialidades || [])[0]}&medico=${m.id}">Agendar</a></article>`;
 
 function landing() {
-  const sel = $("#f-esp");
-  sel.innerHTML = espLista().map((e) => `<option value="${e.id}">${esc(e.nome)}</option>`).join("");
-  const desenhar = () => {
-    const esp = sel.value;
-    const itens = medicosAtivos().filter((m) => m.especialidades.includes(esp)).map((m) => ({ m, p: proximoLivre(m) })).filter((x) => x.p).sort((a, b) => (a.p.data + a.p.h).localeCompare(b.p.data + b.p.h)).slice(0, 3);
-    $("#f-lista").innerHTML = itens.length
-      ? itens.map(({ m, p }) => `<a class="free-row" href="agendamento.html?especialidade=${esp}&medico=${m.id}&unidade=${p.unidadeId}&data=${p.data}&horario=${p.h}"><span><b>${esc(m.nome)}</b><small>${esc(nomeUnidade(p.unidadeId))}</small></span><span class="badge info">${rotuloDia(p.data)} às ${p.h}</span></a>`).join("")
-      : '<p class="muted">Sem horários livres nos próximos dias. Tente outra especialidade.</p>';
-  };
-  sel.addEventListener("change", desenhar); desenhar();
-  $("#esp-grid").innerHTML = espLista().map((e) => `<a class="esp" href="buscar.html?especialidade=${e.id}"><b>${esc(e.nome)}</b><small>${medicosAtivos().filter((m) => m.especialidades.includes(e.id)).length} médico(s)</small></a>`).join("");
-  $("#unidades-lista").innerHTML = DB.get("unidades").filter((u) => u.ativa !== false).map(cartaoUnidade).join("");
+  const un = DB.get("unidades").filter((u) => u.ativa !== false);
+  $("#numeros").style.gridTemplateColumns = "repeat(3,1fr)";
+  $("#numeros").innerHTML = `<div class="stat"><b>${un.length}</b><span>Unidades</span></div><div class="stat"><b>${medicosAtivos().length}</b><span>Médicos</span></div><div class="stat"><b>${espLista().length}</b><span>Especialidades</span></div>`;
+  $("#esp-grid").innerHTML = espLista().map((e) => `<div class="esp"><b>${esc(e.nome)}</b><small>${medicosAtivos().filter((m) => m.especialidades.includes(e.id)).length} médico(s)</small></div>`).join("");
+  $("#unidades-lista").innerHTML = un.map(cartaoUnidade).join("");
 }
 
 function buscar() {

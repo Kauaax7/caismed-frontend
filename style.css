@@ -285,3 +285,10 @@ details[open]>summary{margin-bottom:4px}
 .doc-card{flex-wrap:wrap}.doc-card .grow{flex:1 1 150px;min-width:0}.doc-card>.btn{margin-left:auto}
 @media(max-width:520px){.app-header .brand>span:last-child{display:none}.unit-pick select{max-width:128px;padding:9px 10px;font-size:13px}.app-header{gap:8px;padding-left:10px;padding-right:10px}}
 @media(min-width:1024px){.nav a{font-size:.98rem}}
+
+[hidden]{display:none!important}
+.esp{cursor:default}.esp:hover{border-color:var(--line);background:var(--surface)}
+#abas-perfil button{flex:1 1 0;padding:8px 4px;min-width:0}
+.hero .wrap{grid-template-columns:minmax(0,1fr)}.hero .stack,.finder{min-width:0}
+@media(min-width:1024px){.hero .wrap{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}}
+#numeros .stat{padding:12px}#numeros .stat b{font-size:1.6rem}
