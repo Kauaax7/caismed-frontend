@@ -16,7 +16,7 @@ Depois acesse `http://localhost:8000`. Também funciona abrindo o `index.html` d
 
 | Perfil | Login | Senha |
 |---|---|---|
-| Paciente | CPF 529.982.247-25 | 123456 |
+| Paciente | CPF 390.533.447-05 | 123456 |
 | Atendente | matrícula 1001 | caismed123 |
 | Médico | matrícula 2001 (outros: 2002 a 2007) | caismed123 |
 | Administrador | matrícula 9001 | caismed123 |

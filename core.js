@@ -137,19 +137,10 @@ const espNome = (k) => (espLista().find((e) => e.id === k) || {}).nome || k || "
 const ESPECIALIDADES = new Proxy({}, { get: (_, k) => espNome(k) }); // compatível com o código antigo: ESPECIALIDADES[chave]
 const proximoDiaSemana = (dias, de) => { for (let i = 0; i < 21; i++) { const d = addDias(de, i); if (dias.includes(diaSemana(d))) return d; } return de; };
 
-function seed() {
-  const L = localStorage;
-  if (L.getItem("caismed_seed") !== "3") {
-    if (!L.getItem("unidades")) DB.set("unidades", UNIDADES_PADRAO);
-    if (!L.getItem("usuarios")) DB.set("usuarios", USUARIOS_PADRAO);
-    if (!L.getItem("especialidades")) DB.set("especialidades", ESP_PADRAO);
-    if (!L.getItem("exames")) DB.set("exames", EXAMES_PADRAO);
-    if (!L.getItem("planos")) DB.set("planos", PLANOS_PADRAO);
-    if (!L.getItem("config")) DB.set("config", CONFIG_PADRAO);
-    const cls = DB.get("clientes");
-    if (!cls.some((c) => c.cpf === "52998224725")) {
+function criarClienteDemo() {
+    if (!DB.find("clientes", "c-demo")) {
       const cid = "c-demo";
-      DB.add("clientes", { id: cid, nome: "Maria Oliveira", cpf: "52998224725", nascimento: "1988-04-12", telefone: "(81) 99999-0000", email: "maria@exemplo.com", cidade: "Olinda", plano: "conforto", pagamento: "Pix", senha: "123456", criadoEm: new Date().toISOString(), demo: true,
+      DB.add("clientes", { id: cid, nome: "Maria Oliveira", cpf: "39053344705", nascimento: "1988-04-12", telefone: "(81) 99999-0000", email: "maria@exemplo.com", cidade: "Olinda", plano: "conforto", pagamento: "Pix", senha: "123456", criadoEm: new Date().toISOString(), demo: true,
         dependentes: [{ id: "d1", nome: "Pedro Oliveira", nascimento: "2016-09-03", parentesco: "Filho", acesso: true }, { id: "d2", nome: "José Oliveira", nascimento: "1960-02-20", parentesco: "Pai", acesso: false }],
         consentimentos: { termos: true, lgpd: true, notificacoes: true, marketing: false, aceitoEm: new Date().toISOString() } });
       const hoje = hojeISO();
@@ -166,6 +157,28 @@ function seed() {
       DB.add("autorizacoes", { id: uid(), clienteId: cid, titulo: "Ultrassom de Abdômen", guiaNome: "guia-ultrassom.pdf", status: "em_analise", obs: "", criadoEm: new Date().toISOString(), atualizadoEm: new Date().toISOString() });
       notificar("cliente:" + cid, "Bem-vindo ao CaisMed", "Sua conta está pronta. Agende consultas, veja seus documentos e use a carteirinha digital.", "home.html");
     }
+}
+
+// Garante que as contas de demonstração existam e funcionem (mesmo com dados antigos no navegador)
+function garantirDemo() {
+  const us = DB.get("usuarios");
+  USUARIOS_PADRAO.forEach((d) => { const u = us.find((x) => x.id === d.id); if (u) Object.assign(u, { matricula: d.matricula, senha: d.senha, ativo: true, perfil: d.perfil }); else us.push(structuredClone(d)); });
+  DB.set("usuarios", us);
+  criarClienteDemo();
+  DB.upd("clientes", "c-demo", { cpf: "39053344705", senha: "123456" });
+  PLANOS = DB.get("planos", PLANOS_PADRAO);
+}
+
+function seed() {
+  const L = localStorage;
+  if (L.getItem("caismed_seed") !== "3") {
+    if (!L.getItem("unidades")) DB.set("unidades", UNIDADES_PADRAO);
+    if (!L.getItem("usuarios")) DB.set("usuarios", USUARIOS_PADRAO);
+    if (!L.getItem("especialidades")) DB.set("especialidades", ESP_PADRAO);
+    if (!L.getItem("exames")) DB.set("exames", EXAMES_PADRAO);
+    if (!L.getItem("planos")) DB.set("planos", PLANOS_PADRAO);
+    if (!L.getItem("config")) DB.set("config", CONFIG_PADRAO);
+    criarClienteDemo();
     migrar();
     L.setItem("caismed_seed", "3");
   }

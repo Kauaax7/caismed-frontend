@@ -53,7 +53,8 @@ function login() {
   abas.forEach((b) => b.addEventListener("click", () => trocar(b.dataset.perfil)));
   trocar(["cliente", "atendente", "medico", "admin"].includes(perfil) ? perfil : "cliente");
   $("#ver-senha").addEventListener("click", () => { const s = $("#senha"); const mostrar = s.type === "password"; s.type = mostrar ? "text" : "password"; $("#ver-senha").setAttribute("aria-label", mostrar ? "Ocultar senha" : "Mostrar senha"); });
-  const falha = (msg) => { erro.textContent = msg; erro.hidden = false; };
+  const falha = (msg) => { erro.textContent = msg; erro.hidden = false; erro.scrollIntoView({ block: "center", behavior: "smooth" }); toast(msg, "err"); };
+  $("#btn-demo").addEventListener("click", () => { garantirDemo(); const d = { cliente: ["390.533.447-05", "123456"], atendente: ["1001", "caismed123"], medico: ["2001", "caismed123"], admin: ["9001", "caismed123"] }[perfil]; if (perfil === "cliente") $("#cpf").value = d[0]; else $("#matricula").value = d[0]; $("#senha").value = d[1]; f.requestSubmit(); });
   const destino = (p) => { const v = q.get("volta"); return v && /^[a-z0-9-]+\.html(\?.*)?$/i.test(v) && p === "cliente" ? v : HOME[p]; };
   const concluir = (id) => { Sessao.entrar(perfil, id); audit("Entrou no sistema"); location.href = destino(perfil); };
   f.addEventListener("submit", (e) => {
